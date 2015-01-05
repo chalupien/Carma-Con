@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta http-equiv="refresh" content="5">
+  <meta charset="UTF-8">
+
+  <title>ASDP API Sampler: JavaScript</title>
+
+  <link rel='shortcut icon' type='image/x-icon' href='src/images/favicon.ico'>
+  <link rel="stylesheet" href="main.css">
+
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+
+
+</head>
+<body>
+
+Fuel Level: <h1 id='fuelUsage'></h1>
+
+    <input type="hidden" name="api-key" value="d473a0b8b8f49151fa55cc1d4c3e8517">
+
+    <input type="hidden" name="device-id" value="e262de0213e1bb76bdeebdac0bcc253f">
+
+    <!--<fieldset id="device-view">
+      <legend>Get device information</legend>
+      <pre><code></code></pre>
+      <button>Get</button>
+    </fieldset>-->
+
+    <span style="display:none;">
+    <fieldset id="stream-push">
+      
+      <label>Stream name:</label>
+      <input type="text" name="stream-name" value="fuelUsage">
+
+      <label>Value:</label>
+      <input type="text" name="stream-value" id="fuelUsageVal" value="">
+
+      <button id="fuelUsageSubmit">Push value</button>
+    </fieldset>
+    </span>
+<!--
+    <fieldset id="stream-view">
+      <legend>Fetch stream values</legend>
+
+      <label>Stream name:</label>
+      <input type="text" name="stream-name" value="fuelUsage">
+
+      <pre><code></code></pre>
+      <button>Fetch values</button>
+    </fieldset>
+    
+    -->
+
+    <p id="status-bar">Status: <span></span></p> 
+
+
+
+
+
+  <script src="m2x-2.0.0.js"></script>
+  <script src="jquery-2.1.1.min.js"></script>
+ 
+ <script>
+$.ajax({
+    url: 'http://sierra.hack.att.io:3000/remoteservices/v1/vehicle/diagnostics/view/1XACR15X0TTA00027',
+    type: 'post',
+    data: {
+    },
+    headers: {
+        'APIKey': 'api-key-1234',
+		'Authorization': 'Basic cHJvdmlkZXI6MTIzNA==',
+		'Content-type': 'application/json',
+		'Accept': 'application/json'
+    },
+    dataType: 'json',
+    success: function (data) {
+        console.info(data);
+		if ("requestId" in data) {
+			var requestId = data.requestId;
+			tryData(requestId);
+			
+		}
+    }
+});
+
+$.ajax({
+    url: 'http://sierra.hack.att.io:3000/remoteservices/v1/vehicle/status/view/1XACR15X0TTA00027',
+    type: 'post',
+    data: {
+    },
+    headers: {
+        'APIKey': 'api-key-1234',
+		'Authorization': 'Basic cHJvdmlkZXI6MTIzNA==',
+		'Content-type': 'application/json',
+		'Accept': 'application/json'
+    },
+    dataType: 'json',
+    success: function (data) {
+        console.info(data);
+		if ("requestId" in data) {
+			var requestId = data.requestId;
+			tryData(requestId);
+			
+			
+			
+		}
+    }
+});
+
+
+function tryData(requestId) {
+	//console.log("requestId", requestId);
+
+$.ajax({
+    url: 'http://sierra.hack.att.io:3000/remoteservices/v1/vehicle/status/1XACR15X0TTA00027/'+(requestId),
+    type: 'get',
+    data: {
+		
+    },
+    headers: {
+        'APIKey': 'api-key-1234',
+		'Authorization': 'Basic cHJvdmlkZXI6MTIzNA==',
+		'Content-type': 'application/json',
+		'Accept': 'application/json'
+    },
+    dataType: 'json',
+    success: function (data) {
+        console.info("data", data);
+		$('#fuelUsage').html(data.statusReport.fuelUsage);
+		$('#fuelUsageVal').val(data.statusReport.fuelUsage);
+		if ($('#fuelUsageVal').val()>0) {
+
+
+$.ajax({
+type: 'GET',
+url: "https://api-m2x.att.com/v2/devices/e262de0213e1bb76bdeebdac0bcc253f/streams/garagedoortracker/values",
+headers: {
+"X-M2X-KEY":"d473a0b8b8f49151fa55cc1d4c3e8517"
+},
+data: {}
+}).success(function(data) { 
+//console.log("M2X");
+console.log("M2X");
+
+//for (var i in data.values) {
+	//alert(window.location.hash);
+	
+	var d = new Date();
+var n = d.getSeconds();
+
+var randNum = Number(Math.floor(Math.random() * 2) + 1).toFixed(0);
+	
+	//alert(randNum);
+if (data.values[0].value==randNum) {
+	getDLAuth(0,"31A0E161074C49A7A9939B5C2B099FFF","PE00000002","KE_790C5332D82A67BE_1","553290699");
+}
+else {
+	getDLAuth(1,"31A0E161074C49A7A9939B5C2B099FFF","PE00000002","KE_790C5332D82A67BE_1","553290699");	
+}
+console.log(data.values[0].value + " " + data.values[0].timestamp);
+//}
+
+//console.log("M2X");
+//console.log("M2X");
+console.log("M2X");
+});
+
+
+		  
+			/*
+			if ($('#fuelUsageVal').val()<30) {
+				var i = 1;
+				getDLAuth(i,"31A0E161074C49A7A9939B5C2B099FFF","PE00000002","KE_790C5332D82A67BE_1","553290699");
+				
+			}
+			else {
+				
+				var i = 0;
+				getDLAuth(i,"31A0E161074C49A7A9939B5C2B099FFF","PE00000002","KE_790C5332D82A67BE_1","553290699");
+			}
+			*/
+			
+			$('#fuelUsageSubmit').click();
+		}
+		//if ("requestId" in data) {
+		//	var requestId = data.requestId;	
+		//}
+    }
+});
+	
+}
+
+
+function getDLAuth(i,gatewayGUID,deviceGUID,appKey,userId) {
+	
+	//appKey=GI_056782DCB4B8EDFE_001&domain=DL&password=NO-PASSWD&userId=552188836
+	
+	 $.post(urlPrefix + "penguin/api/authtokens", {"userId": userId,  "password": "NO-PASSWD", "domain": "DL", "appKey": appKey}, function (data) {
+                //Save off Auth info
+                gatewayGuid = data.content.gateways[0].id;
+                authHeaders.authToken = data.content.authToken;
+                authHeaders.requestToken = data.content.requestToken;
+                authHeaders.appKey = "KE_790C5332D82A67BE_1";
+				
+				switchLight(i,data.content.authToken,data.content.requestToken,appKey,gatewayGUID,"PE00000008");
+				
+                
+	 });
+	 
+	
+
+	
+}
+
+
+function fetchURL (url, successFunction, data, contentTypeP,gatewayGUID){
+        //console.log(urlPrefix + url.replace(/{gatewayGUID}/gi, gatewayGUID));
+		//console.log(authHeaders);
+		$.ajax({
+            type: data ? "POST" : "GET",
+            headers: authHeaders,
+            data: data,
+            url: urlPrefix + url.replace(/{gatewayGUID}/gi, gatewayGUID),
+            contentType: contentTypeP ? contentTypeP : "text/plain",
+            dataType: "json",
+            success: successFunction
+        });
+}
+
+function getAttributeValue(device, attributeName){
+                    for (var j=0; j<device.attributes.length; j++){
+                        if (device.attributes[j].label === attributeName){
+                            return device.attributes[j].value;
+                        }
+                    }
+                }
+
+
+function switchLight(i,authToken,requestToken,appKey,gatewayGUID,deviceID) {
+	
+if (i==0) { ii = 'off'; iii = 'lock'; }
+else { ii = 'on'; iii = 'unlock'; }
+
+	 fetchURL("penguin/api/"+gatewayGUID+"/devices/DT00000006/thermostat-mode/" +  ii,{},1,'',gatewayGUID);
+	 
+	 fetchURL("penguin/api/"+gatewayGUID+"/devices/DL00000007/" +  iii,{},1,'',gatewayGUID);
+	 
+	 
+	
+	 fetchURL("penguin/api/"+gatewayGUID+"/devices/"+deviceID+"/switch/" +  ii, function(data){
+		 
+		 //console.log(data);
+		 
+		 
+		 
+		 
+		 
+		 fetchURL("penguin/api/"+gatewayGUID+"/devices", function(data){
+                    
+                    data.content.sort(function(a,b) {return (getAttributeValue(a, "name") > getAttributeValue(b, "name")) ? 1 : -1;} );
+                    for (var i=0; i<data.content.length; i++){
+                        $('body').append('<tr><td>' + getAttributeValue(data.content[i], "name") + '</td><td>' + data.content[i].deviceType + '</td><td>' + ("0"===getAttributeValue(data.content[i], "status") ? "Online": "Offline") + '</td><td>' + actionRenderer(data.content[i]) + '</td></tr>')
+                    }
+                });
+
+		 
+         //                   $("body").append("<img src='data:image/jpeg;base64, " + data.content.encodedImage + "' class='liveVideo'/>");
+		 
+	 },1,'',gatewayGUID);
+	 
+ //(url, successFunction, data, contentTypeP){
+	 
+	 
+	 /* fetchURL("/penguin/api/{gatewayGUID}/snapshot/" +  eServiceMessage.dev, function(data){
+                            $("body").append("<img src='data:image/jpeg;base64, " + data.content.encodedImage + "' class='liveVideo'/>");
+	 });
+	 */
+	 
+	 /*
+        $.ajax({
+            type: data ? "POST" : "GET",
+            headers: authHeaders,
+            data: data,
+            url: urlPrefix + url.replace(/{gatewayGUID}/gi, gatewayGUID),
+            contentType: contentTypeP ? contentTypeP : "text/plain",
+            dataType: "json",
+            success: successFunction
+        });
+		
+		*/
+
+//}	
+	
+/*
+fetchURL("penguin/api/{gatewayGUID}/devices", function(data){
+                    var $devices = $("#deviceTBody");
+                    data.content.sort(function(a,b) {return (getAttributeValue(a, "name") > getAttributeValue(b, "name")) ? 1 : -1;} );
+                    for (var i=0; i<data.content.length; i++){
+                        if (!(data.content[i].deviceType in deviceTypesICareAbout)) continue;
+                        $devices.append('<tr><td>' + getAttributeValue(data.content[i], "name") + '</td><td>' + data.content[i].deviceType + '</td><td>' + ("0"===getAttributeValue(data.content[i], "status") ? "Online": "Offline") + '</td><td>' + actionRenderer(data.content[i]) + '</td></tr>')
+                    }
+                });
+*/
+	/*
+
+if (i==0) { ii = 'off'; }
+else { ii = 'on'; }
+
+ $.post(urlPrefix + "penguin/api/"+appKey+"/devices/PE00000002/switch/on", {"userId": "553290699",  "password": "NO-PASSWD", "domain": "DL", "appKey": "KE_790C5332D82A67BE_1"}, function (data) {
+                //Save off Auth info
+                gatewayGuid = data.content.gateways[0].id;
+                authHeaders.authToken = data.content.authToken;
+                authHeaders.requestToken = data.content.requestToken;
+                authHeaders.appKey = "KE_790C5332D82A67BE_1";
+				
+				console.log(data.content.authToken);
+				
+				turnOnLight(0,data.content.authToken,data.content.requestToken);
+				
+ });
+             
+			 
+
+$.ajax({
+    url: 'https://systest.digitallife.att.com:443/penguin/api/31A0E161074C49A7A9939B5C2B099FFF/devices/PE00000002/switch/on',//+ii,
+    type: 'post',
+    data: {
+    },
+    headers: {
+    
+		'Content-type': 'application/json',
+		'Accept': 'application/json'
+    },
+    dataType: 'json',
+    success: function (data) {
+        console.info(data);
+		
+    }
+});
+
+*/
+
+ function xTof(x){ return Math.round((parseInt(x)/2 - 40)*9/5 + 32);}
+    function fTox(f){ return "" + Math.round( (10 * parseInt(f) + 400) / 9);}
+
+
+ function actionRenderer(device){
+                    switch (device.deviceType){
+                        case "contact-sensor":
+                            return '<span data-id="' + device.deviceGuid + '" data-displayOnly="contact-state">'+getAttributeValue(device, "contact-state")+" - "+ device.deviceGuid +"</span>";
+                        case "camera":
+                            return '<i data-id="' + device.deviceGuid + '" class="viewVideo fa fa-video-camera"></i>&nbsp&nbsp;<i data-id="' + device.deviceGuid + '" class="viewPhoto fa fa-photo"></i>';
+                        case "smart-plug":
+                            return '<div class="btn-group"><a data-action="switch" data-id="' + device.deviceGuid + '" data-value="on" class="actionBtn btn btn-sm ' + (getAttributeValue(device, "switch")=="on"?"btn-primary":"btn-default") + '">on</a><a  data-action="switch" data-id="' + device.deviceGuid + '" data-value="off" class="actionBtn btn btn-sm ' + (getAttributeValue(device, "switch")=="off"?"btn-primary":"btn-default") + '">off</a></div>';
+                        case "door-lock":
+                            return '<div class="btn-group"><a data-action="lock" data-id="' + device.deviceGuid + '" data-value="lock" class="actionBtn btn btn-sm ' + (getAttributeValue(device, "lock")=="lock"?"btn-primary":"btn-default") + '">lock</a><a data-action="lock" data-id="' + device.deviceGuid + '" data-value="unlock" class="actionBtn btn btn-sm ' + (getAttributeValue(device, "lock")=="unlock"?"btn-primary":"btn-default") + '">unlock</a></div>';
+                        case "thermostat":
+                            return  'Current Temp: <span data-id="' + device.deviceGuid + '" data-displayTemp="temperature">' + xTof(getAttributeValue(device, "temperature")) + '</span>'+
+                                    '<br/><div style="width: 170px; float:right" class="btn-group"><a data-action="thermostat-mode" data-id="' + device.deviceGuid + '" data-value="heat" class="actionBtn btn btn-sm ' + (getAttributeValue(device, "thermostat-mode")=="heat"?"btn-primary":"btn-default") + '">heat</a><a data-action="thermostat-mode" data-id="' + device.deviceGuid + '" data-value="cool" class="actionBtn btn btn-sm ' + (getAttributeValue(device, "thermostat-mode")=="cool"?"btn-primary":"btn-default") + '">cool</a><a data-action="thermostat-mode" data-id="' + device.deviceGuid + '" data-value="auto" class="actionBtn btn btn-sm ' + (getAttributeValue(device, "thermostat-mode")=="auto"?"btn-primary":"btn-default") + '">auto</a><a data-action="thermostat-mode" data-id="' + device.deviceGuid + '" data-value="off" class="actionBtn btn btn-sm ' + (getAttributeValue(device, "thermostat-mode")=="off"?"btn-primary":"btn-default") + '">off</a></div><span  style="height: 20px; display: block;">Mode:</span>'+
+                                    '<br/><div class="input-group" style="width: 128px; float:right"><input type="text" data-id="' + device.deviceGuid + '" data-displayTemp="cool-setpoint" class="form-control" value="'+xTof(getAttributeValue(device, "cool-setpoint")) + '"><span class="input-group-btn"><button class="tempSaveBtn btn btn-default" type="button">Save</button></span></div><span style="height: 20px; display: block;">Target Cool: </span>'+
+                                    '<br/><div class="input-group" style="width: 128px; float:right"><input type="text" data-id="' + device.deviceGuid + '" data-displayTemp="heat-setpoint" class="form-control" value="'+xTof(getAttributeValue(device, "heat-setpoint")) + '"><span class="input-group-btn"><button class="tempSaveBtn btn btn-default" type="button">Save</button></span></div><span style="height: 20px; display: block;">Target Heat: </span>';
+                        case "garage-door-controller":
+                            return '<div class="btn-group"><a data-action="garage-door-control" data-id="' + device.deviceGuid + '" data-display="garage-door-state" data-value="open" class="actionBtn btn btn-sm ' + (getAttributeValue(device, "garage-door-state")=="open"?"btn-primary":"btn-default") + '">open</a><a data-action="garage-door-control" data-id="' + device.deviceGuid + '" data-display="garage-door-state" data-value="closed" class="actionBtn btn btn-sm ' + (getAttributeValue(device, "garage-door-state")=="closed"?"btn-primary":"btn-default") + '">close</a></div>';
+                    }
+                    return "";
+                }
+
+	
+}
+ </script>
+
+
+<script>
+
+ var urlPrefix = "https://systest.digitallife.att.com/";
+ var authHeaders = {"appKey": "KE_790C5332D82A67BE_1", "requestToken": null, "authToken": null};
+    var gatewayGuid = null;
+
+</script>
+
+<script>
+
+function getCarLeaving() {
+	
+	this.m2x.devices.streamValues(this.deviceID, streamName,
+                    $.proxy(this, "onReceiveStreamValues"),
+                    $.proxy(this, "handleError")
+                );
+	
+}
+
+/*globals jQuery,localStorage,alert,M2X*/
+(function($) {
+    function M2XExample() {
+        this.$statusBar = $("#status-bar span");
+        this.$apiKey = $("input[name=api-key]");
+        this.$deviceID = $("input[name=device-id]");
+        this.$deviceView = $("#device-view");
+        this.$streamPush = $("#stream-push");
+        this.$streamView = $("#stream-view");
+
+        this.bindEvents();
+
+        // Load api/device values from localStorage (if any)
+        this.$apiKey.val( localStorage.getItem("api-key") || "" );
+        this.$deviceID.val( localStorage.getItem("device-id") || "" );
+        this.onKeyChange();
+        this.ondeviceChange();
+    }
+
+    M2XExample.prototype.handleError = function(error) {
+        var text = error.message;
+
+        if (error.responseJSON) {
+            console.log(error);
+            text = JSON.stringify(error.responseJSON);
+        } else {
+            text = error.message;
+        }
+
+        this.setLoading(false, text);
+    };
+
+    M2XExample.prototype.onReceiveDeviceDetails = function(data) {
+        $("code", this.$deviceView).text(JSON.stringify(data));
+
+        this.setLoading(false);
+    };
+
+    M2XExample.prototype.onReceiveStreamValues = function(data) {
+        $("code", this.$streamView).text(JSON.stringify(data));
+
+        this.setLoading(false);
+    };
+
+    M2XExample.prototype.bindEvents = function() {
+        // Call onKeyChange when api key input changes
+        this.$apiKey.on("change", $.proxy(this, "onKeyChange"));
+
+        // Call ondeviceChange when device-id input changes
+        this.$deviceID.on("change", $.proxy(this, "ondeviceChange"));
+
+        // Hook this event on all buttons so that we share the check
+        // for api-key/device-id, which is needed for all three operations
+        $("button").on("click", $.proxy(function(ev) {
+            if (! this.m2x) {
+                alert("You must type an API Key first.");
+            } else if (! this.deviceID) {
+                alert("You must type a device ID first.");
+            } else {
+                return;
+            }
+
+            ev.stopPropagation();
+        }, this));
+
+        // Handler for getting device information
+        this.$deviceView.on("click", "button", $.proxy(function() {
+            this.setLoading(true);
+
+            this.m2x.devices.view(this.deviceID,
+                $.proxy(this, "onReceiveDeviceDetails"),
+                $.proxy(this, "handleError")
+            );
+        }, this));
+
+        // Handler for pushing values to a data stream
+        this.$streamPush.on("click", "button", $.proxy(function() {
+            var streamName = $("input[name=stream-name]", this.$streamPush).val();
+            var value = $("input[name=stream-value]", this.$streamPush).val();
+
+            if (! streamName) {
+                alert("You must type an Stream name first.");
+            } else if (! value) {
+                alert("You must type a value to be pushed.");
+            } else {
+                this.setLoading(true);
+
+                this.m2x.devices.setStreamValue(this.deviceID, streamName, { value: value },
+                    $.proxy(function() { this.setLoading(false); }, this),
+                    $.proxy(this, "handleError")
+                );
+            }
+        }, this));
+
+        // Handler for fetching values from a data stream
+        this.$streamView.on("click", "button", $.proxy(function() {
+            var streamName = $("input[name=stream-name]", this.$streamView).val();
+
+            if (! streamName) {
+                alert("You must type an Stream name first.");
+            } else {
+                this.setLoading(true);
+
+                this.m2x.devices.streamValues(this.deviceID, streamName,
+                    $.proxy(this, "onReceiveStreamValues"),
+                    $.proxy(this, "handleError")
+                );
+            }
+        }, this));
+    };
+
+    M2XExample.prototype.ondeviceChange = function() {
+        this.deviceID = this.$deviceID.val();
+        localStorage.setItem("device-id", this.deviceID);
+    };
+
+    M2XExample.prototype.onKeyChange = function() {
+        // In this example we create a new M2X object each time the api key changes,
+        // but in most cases you'll be using the same api key all the time, so what we
+        // do here might not necessarily apply for your use case.
+        var key = this.$apiKey.val();
+
+        if (key) {
+            this.m2x = new M2X(key);
+        } else {
+            this.m2x = undefined;
+        }
+
+        localStorage.setItem("api-key", key);
+    };
+
+    M2XExample.prototype.setLoading = function(enabled, error) {
+        if (enabled) {
+            this.$statusBar.text("Loading...");
+        } else {
+            if (error) {
+                this.$statusBar.text("Error (" + error + ")");
+            } else {
+                this.$statusBar.text("Done!");
+            }
+        }
+    };
+
+    $(function() {
+        new M2XExample();
+    });
+}(jQuery));
+
+
+
+
+</script>
+</body>
+</html>

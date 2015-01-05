@@ -1,0 +1,106 @@
+<div id="api-homepage">
+
+  <h1 class="cf">
+    <div class="left"><%= name %></div>
+    <div class="left details">
+      <div class="left req-type"><%= resourceTable['HTTP Verb'][0] %></div>
+      <div class="left req-url"><%= resourceTable.Route %></div>
+    </div>
+    <div id="back-to-params">Go back to Parameter list</div>
+    <button id="send">Send</button>
+  </h1>
+
+  <div id="legend" class="cf">
+    <div class="left">
+      <span class="lock"></span> Authentication Required
+    </div>
+    <div class="right">
+      <span class="required">*</span> required parameter
+    </div>
+  </div>
+
+
+
+
+  <div id="request" class="cf">
+    <div id="request-type" class="request-details">
+      <h3>Request Type</h3>
+      <div class="body-details" data-default="No Request Type Provided"></div>
+    </div>
+    
+    <div id="request-url" class="request-details">
+      <h3>URL</h3>
+      <div class="body-details" data-default="No URL Provided"></div>
+    </div>
+
+    <div id="request-body" class="request-details">
+      <h3>Request Body</h3>
+      <pre class="body-details" data-default="No Request Body Provided"></pre>
+    </div>
+    <div id="response-body" class="request-details">
+      <h3>Response Body</h3>
+      <pre class="body-details" data-default="Waiting for Response..."></pre>
+    </div>
+    
+    <div style="clear:both;"></div>
+
+    <div id="ajax-code" class="request-details">
+      <h3>AJAX Request Code</h3>
+      <pre class="body-details" data-default=""></pre>
+    </div>
+  </div>
+
+
+
+
+  <div id="param-list">
+
+    <ul>
+    <% 
+      if(parameters.route){
+    %>
+      <li class="param-head">Route Parameters</li>
+    <%
+        for(var k in parameters.route){ 
+          var param = parameters.route[k];
+    %>
+      <li>
+        <span class="required">*</span>
+        <span class="key"><%= k %></span>
+        <input class="route-param" type="text" data-key="<%=k%>" placeholder="<%= param %>" />
+      </li>
+    <% 
+        }
+      }
+     %>
+    </ul>
+
+
+    <ul>
+    <% 
+      if(parameters.requestBody && parameters.requestBody.length){
+    %>
+      <li class="param-head">Request Parameters</li>
+    <%
+        for(var i=0; i<parameters.requestBody.length; i++){ 
+          var param = parameters.requestBody[i];
+    %>
+      <li>
+        <% if(param.required){ %>
+          <span class="required">*</span>
+        <% } %>
+        <span class="key"><%= param.key %></span>
+        <input class="req-param" type="text" data-key="<%=param.key%>" placeholder="<%= param.description %>" />
+      </li>
+    <% 
+        }
+      }
+     %>
+    </ul>
+
+  </div>
+
+
+
+
+</div>

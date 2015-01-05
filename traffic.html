@@ -1,0 +1,366 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="refresh" content="90">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Untitled Document</title>
+  <script src="jquery-2.1.1.min.js"></script>
+  <script src="m2x-2.0.0.js"></script>
+
+<style>
+      html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+    </style>
+    
+</head>
+
+<body>
+
+
+
+
+
+ <input type="text" id="origin" value="34.01396527491264,-118.49853515625" size='150'> <!-- 33.559768,-117.728416 --> 
+ <br />
+
+ <input type="text" id="destination" value="38.632317,-122.876131" size='150'> <!-- 38.632317,-122.876131 -->
+
+
+First click on map, origin, second is destination.
+
+
+ <input type="hidden" name="api-key" value="47a38743aca2a32536b1f84440fecd67">
+
+    <input type="hidden" name="device-id" value="50bd1550268fa151345ef94e5e519d00">
+
+ <span style="display:none;">
+    <fieldset id="stream-push">
+      
+      <label>Stream name:</label>
+      <input type="text" id="stream-name" value="routeone">
+
+      <label>Value:</label>
+      <input type="text" name="stream-value" id="route1Val" value="">
+
+      <button id="route1Submit">Push value</button>
+    </fieldset>
+    </span>
+    
+    <p id="status-bar">Status: <span></span></p> 
+    
+ 
+
+
+ <div id="map-canvas"></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+
+<script>
+
+var next = 0;
+
+function initialize() {
+  var mapDiv = document.getElementById('map-canvas');
+  var map = new google.maps.Map(mapDiv, {
+    center: new google.maps.LatLng(33.988918483762156,-118.2568359375),
+    zoom: 9,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  });
+
+ 
+      google.maps.event.addListener(map, 'click', function(args) {  
+	  	
+		if (next%2==0) {
+			
+	  		$('#origin').val(args.latLng.k + ',' + args.latLng.D);
+			next++;
+			console.log(next + ' ORIGIN latlng', args.latLng.k + ',' + args.latLng.D);
+			
+		}
+		else { 
+			
+			$('#destination').val(args.latLng.k + ',' + args.latLng.D);
+			next=0;
+			console.log(next + ' DESTINATION latlng', args.latLng.k + ',' + args.latLng.D);
+			lookupTIME();
+			
+		}
+		
+		
+   
+  });
+}
+</script>
+
+
+    
+    <script>
+	
+	
+			
+        $(window).ready(function () {
+			
+			initialize();
+
+            
+			
+		if ($('#origin').val()!="" && $('#destination').val()!="") {
+			
+			lookupTIME();
+		
+		}
+		
+		else {
+			
+		}
+		
+		
+           
+        });
+		
+		
+		
+		function lookupTIME() {
+			
+			var origin = $('#origin').val();//"33.559768,-117.728416";
+            var destination = $('#destination').val();
+			
+			if (origin==destination) { next=0;return; }//"38.632317,-122.876131";
+			
+			
+            var trafficURL = "https://api.tcsltk.com/api/v2/route/json?origin="+origin+"&destination="+destination+"&optimize=fastest&vehicle=car&avoid=hov&traffic_level=alert&apikey=UQFff5wRPoim2xiXZIHdbQqQtTcGATvomrGl0zpA&uid=d00dad12345678901234567890123456&pid=415203";
+			
+		
+		$.ajax({
+            url: trafficURL,
+            type: 'GET',
+            dataType: 'json',
+            error: function(xhr, status, error) {
+                //alert("error");
+            },
+            success: function(data) {
+				
+			var totalaccumspeed = 0;
+			var totalfreeflowspeed = 0;
+			
+			var totalspeeds = 0;
+			
+			console.log("total_distance"+ data.total_distance);
+			console.log("estimated_travel_time"+ data.estimated_travel_time);
+			
+			
+	for (var i in data.traffic_flows) {
+		var flow_items = data.traffic_flows[i].traffic_flow_items;
+		for(var j in flow_items) {
+			 totalspeeds++;
+			 totalaccumspeed += flow_items[j].speed;
+			 totalfreeflowspeed += flow_items[j].free_flow_speed;
+			 
+			 console.log(flow_items[j].free_flow_speed);
+			
+		
+		
+					}
+					
+				}
+				console.log(totalaccumspeed);
+				console.log(totalfreeflowspeed);
+				console.log("Speed: "+Number(totalaccumspeed/totalspeeds).toFixed(0)+"mph");
+				console.log("Free Flow: "+Number(totalfreeflowspeed/totalspeeds).toFixed(0)+"mph");
+				
+				var trafficRATE = Number(Number(totalaccumspeed/totalspeeds)/Number(totalfreeflowspeed/totalspeeds)*100).toFixed(0);
+				
+				console.log("Traffic Rate: "+trafficRATE);
+				
+				$('#route1Val').val(trafficRATE);
+				$('#route1Submit').click();
+				console.log(data);
+				
+               $('body').append(data);
+			   
+				
+            }
+        });
+		
+			
+		}
+    </script>
+    
+    
+    
+    
+<script>
+
+/*globals jQuery,localStorage,alert,M2X*/
+(function($) {
+    function M2XExample() {
+        this.$statusBar = $("#status-bar span");
+        this.$apiKey = $("input[name=api-key]");
+        this.$deviceID = $("input[name=device-id]");
+        this.$deviceView = $("#device-view");
+        this.$streamPush = $("#stream-push");
+        this.$streamView = $("#stream-view");
+
+        this.bindEvents();
+
+        // Load api/device values from localStorage (if any)
+        this.$apiKey.val( localStorage.getItem("api-key") || "" );
+        this.$deviceID.val( localStorage.getItem("device-id") || "" );
+        this.onKeyChange();
+        this.ondeviceChange();
+    }
+
+    M2XExample.prototype.handleError = function(error) {
+        var text = error.message;
+
+        if (error.responseJSON) {
+            console.log(error);
+            text = JSON.stringify(error.responseJSON);
+        } else {
+            text = error.message;
+        }
+
+        this.setLoading(false, text);
+    };
+
+    M2XExample.prototype.onReceiveDeviceDetails = function(data) {
+        $("code", this.$deviceView).text(JSON.stringify(data));
+
+        this.setLoading(false);
+    };
+
+    M2XExample.prototype.onReceiveStreamValues = function(data) {
+        $("code", this.$streamView).text(JSON.stringify(data));
+
+        this.setLoading(false);
+    };
+
+    M2XExample.prototype.bindEvents = function() {
+        // Call onKeyChange when api key input changes
+        this.$apiKey.on("change", $.proxy(this, "onKeyChange"));
+
+        // Call ondeviceChange when device-id input changes
+        this.$deviceID.on("change", $.proxy(this, "ondeviceChange"));
+
+        // Hook this event on all buttons so that we share the check
+        // for api-key/device-id, which is needed for all three operations
+        $("button").on("click", $.proxy(function(ev) {
+            if (! this.m2x) {
+                alert("You must type an API Key first.");
+            } else if (! this.deviceID) {
+                alert("You must type a device ID first.");
+            } else {
+                return;
+            }
+
+            ev.stopPropagation();
+        }, this));
+
+        // Handler for getting device information
+        this.$deviceView.on("click", "button", $.proxy(function() {
+            this.setLoading(true);
+
+            this.m2x.devices.view(this.deviceID,
+                $.proxy(this, "onReceiveDeviceDetails"),
+                $.proxy(this, "handleError")
+            );
+        }, this));
+
+        // Handler for pushing values to a data stream
+        this.$streamPush.on("click", "button", $.proxy(function() {
+            var streamName = $("#stream-name").val();
+			//alert(streamName);
+            var value = $("input[name=stream-value]", this.$streamPush).val();
+
+            if (! streamName) {
+                alert("You must type an Stream name first.");
+            } else if (! value) {
+                alert("You must type a value to be pushed.");
+            } else {
+                this.setLoading(true);
+
+                this.m2x.devices.setStreamValue(this.deviceID, streamName, { value: value },
+                    $.proxy(function() { this.setLoading(false); }, this),
+                    $.proxy(this, "handleError")
+                );
+            }
+        }, this));
+
+        // Handler for fetching values from a data stream
+        this.$streamView.on("click", "button", $.proxy(function() {
+            var streamName = $("#stream-name").val();
+
+            if (! streamName) {
+                alert("You must type an Stream name first.");
+            } else {
+                this.setLoading(true);
+
+                this.m2x.devices.streamValues(this.deviceID, streamName,
+                    $.proxy(this, "onReceiveStreamValues"),
+                    $.proxy(this, "handleError")
+                );
+            }
+        }, this));
+    };
+
+    M2XExample.prototype.ondeviceChange = function() {
+        this.deviceID = this.$deviceID.val();
+        localStorage.setItem("device-id", this.deviceID);
+    };
+
+    M2XExample.prototype.onKeyChange = function() {
+        // In this example we create a new M2X object each time the api key changes,
+        // but in most cases you'll be using the same api key all the time, so what we
+        // do here might not necessarily apply for your use case.
+        var key = this.$apiKey.val();
+
+        if (key) {
+            this.m2x = new M2X(key);
+        } else {
+            this.m2x = undefined;
+        }
+
+		//alert(key);
+        localStorage.setItem("api-key", key);
+    };
+
+    M2XExample.prototype.setLoading = function(enabled, error) {
+        if (enabled) {
+            this.$statusBar.text("Loading...");
+        } else {
+            if (error) {
+                this.$statusBar.text("Error (" + error + ")");
+            } else {
+                this.$statusBar.text("Done!");
+            }
+        }
+    };
+
+    $(function() {
+        new M2XExample();
+    });
+}(jQuery));
+
+
+
+
+</script>
+    
+</body>
+</html>
